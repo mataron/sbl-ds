@@ -1,0 +1,259 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: monospace;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#main {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    flex-grow: 1;
+    user-select: none;
+}
+
+#details {
+    display: none;
+    flex-direction: column;
+    user-select: none;
+}
+
+#resize {
+    flex-grow: 0;
+    flex-shrink: 0;
+    background: #1b1b51;
+    width: 0.2rem;
+    cursor: col-resize;
+    margin: 0 0 0 auto;
+    display: none;
+}
+
+#resize:hover {
+    background: #09091a;
+}
+
+#tools {
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+}
+
+#deleteBtn {
+    font-size: 1.75em;
+    font-weight: 900;
+    color: #911;
+    padding: 0 10px;
+    margin: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#deleteBtn:hover {
+    background-color: #faa;
+}
+
+#filterStr {
+    flex-grow: 1;
+    margin: 4px;
+}
+
+.checkbox-label {
+    cursor: pointer;
+    padding-right: 10px;
+}
+
+#list {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 0 14px;
+}
+
+#list>div {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    padding: 5px;
+    user-select: text;
+}
+
+#list>div:hover {
+    background-color: #eee;
+}
+
+#list>div>.label {
+    flex-grow: 1;
+}
+
+#list .status {
+    margin-right: 10px;
+    font-size: 1.4em;
+    font-weight: 900;
+    margin-top: -0.2em;
+}
+
+#list .success {
+    color: green;
+}
+
+#list .error {
+    color: red;
+}
+
+#scrollToTopBtn {
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+    font-size: 2em;
+    font-weight: 900;
+    background-color: #eef;
+    border-radius: 50%;
+    padding: 0px 12px 4px 12px;
+    opacity: 0.8;
+    border: 1px solid #66f;
+    cursor: pointer;
+}
+
+#scrollToTopBtn:hover {
+    background-color: #aaf;
+}
+
+#details .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 5px;
+}
+
+#hideDetailsBtn {
+    font-weight: 900;
+    font-size: 1.1em;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+#hideDetailsBtn:hover {
+    background-color: #eee;
+}
+
+#detailsLabel {
+    user-select: text;
+}
+
+#details .panel-header {
+    cursor: pointer;
+    background-color: #eee;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+}
+
+#details .panel-header > input {
+    flex-grow: 1;
+    max-width: 70%;
+    display: none;
+}
+
+#details .panel-header.open > input {
+    display: initial;
+}
+
+#details .panel-header.empty {
+    background-color: #fafafa;
+}
+
+#details .panel-header.empty > input {
+    display: none;
+}
+
+#details .panel-header:hover {
+    background-color: #ddd;
+}
+
+#details .panel {
+    width: 100%;
+    display: none;
+    overflow: auto;
+    padding: 4px 0;
+    user-select: text;
+}
+
+#details .panel .indent {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#details .panel .entry {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    text-wrap: nowrap;
+}
+
+#details .panel .name:hover {
+    background-color: #eee;
+}
+
+#details .panel .entry.long {
+    flex-direction: column;
+}
+
+#details .panel .entry .value {
+    background-color: #eee;
+    padding: 0 5px;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-weight: 900;
+    text-wrap: nowrap;
+}
+
+#details .panel .entry .number {
+    color: #696;
+}
+
+#details .panel .entry .null {
+    color: #966;
+}
+
+#details .panel .entry .boolean {
+    color: #669;
+}
+
+#details .panel .entry .name .array {
+    color: #939;
+    font-weight: 900;
+}
+
+#details .panel .entry.collapsed {
+    width: 100%;
+    background-color: #fafafa;
+}
+#details .panel .entry.collapsed .name {
+    width: 100%;
+}
+#details .panel .entry.collapsed > .indent {
+    display: none;
+}
+
+#request {
+    flex-grow: 1;
+    max-height: fit-content;
+}
+
+#response {
+    flex-grow: 0;
+}

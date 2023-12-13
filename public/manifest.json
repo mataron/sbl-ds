@@ -1,0 +1,47 @@
+{
+    "name": "Siebel DeStupidifier",
+    "description": "Cuts down some amounts of stupidity from Siebel & MCV",
+    "version": "1.0",
+    "manifest_version": 3,
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "sbl-ds@everywhere",
+            "strict_min_version": "52.0"
+        }
+    },
+    "icons": {
+        "96": "images/logo96.png"
+    },
+    "permissions": [
+        "scripting",
+        "activeTab",
+        "tabs",
+        "webNavigation",
+        "webRequest",
+        "alarms",
+        "storage"
+    ],
+    "optional_permissions": [
+        "devtools"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "type": "module"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "page.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "devtools_page": "devtools/page.html"
+}
