@@ -113,7 +113,6 @@ export class ListController {
         }
     }
 
-
     private createListItem(item: PageMessage): HTMLElement {
         // console.log(item);
         const data = toStatusBarData(item);

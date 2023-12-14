@@ -77,10 +77,10 @@ export class DetailsController {
         this.detailsLabel.innerHTML = data.label;
 
         const requestFilter = new Filter(this.requestFilterStr.value);
-        this.renderJSON(this.item.request, this.request, requestFilter);
+        this.renderObjectView(this.item.request, this.request, requestFilter);
 
         const responseFilter = new Filter(this.responseFilterStr.value);
-        this.renderJSON(this.item.response, this.response, responseFilter);
+        this.renderObjectView(this.item.response, this.response, responseFilter);
 
         document.querySelectorAll('#details .panel .entry .name').forEach(node => {
             const el = node as HTMLElement;
@@ -91,7 +91,7 @@ export class DetailsController {
         });
     }
 
-    private renderJSON(object: unknown, el: HTMLElement, filter: Filter): void {
+    private renderObjectView(object: unknown, el: HTMLElement, filter: Filter): void {
         if (el.children.length) {
             el.children[0].remove();
         }

@@ -50,7 +50,6 @@ function attributeToStatusBarData(item: PageProfileAttributeInfo): SiebelActionD
     };
 }
 
-
 export function toStatusBarData(item: PageMessage): SiebelActionData {
     if (item.api) {
         return apiToStatusBarData(item.api);

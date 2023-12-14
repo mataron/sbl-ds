@@ -1,7 +1,7 @@
 {
     "name": "Siebel DeStupidifier",
     "description": "Cuts down some amounts of stupidity from Siebel & MCV",
-    "version": "1.0",
+    "version": "1.1",
     "manifest_version": 3,
     "browser_specific_settings": {
         "gecko": {
