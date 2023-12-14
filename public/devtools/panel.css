@@ -88,6 +88,12 @@ body {
 #list>div:hover {
     background-color: #eee;
 }
+#list>div.selected {
+    background-color: #ddd;
+}
+#list>div.selected:hover {
+    background-color: #eee;
+}
 
 #list>div>.label {
     flex-grow: 1;

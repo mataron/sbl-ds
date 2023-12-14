@@ -8,28 +8,28 @@ const TAB_LIST: { [key: number]: TabInfo } = {};
 const PORTS_LIST: { [key: number]: chrome.runtime.Port } = {};
 
 
-initialize();
+// avoid extension sleep:
+chrome.alarms.create('', { periodInMinutes: 1 / 60 });
+chrome.alarms.onAlarm.addListener(() => { /*console.log('tabs:', Object.keys(TAB_LIST).length)*/ });
 
+chrome.tabs.onActivated.addListener(onTabActivatedCb);
+chrome.tabs.onRemoved.addListener(onTabRemovedCb);
+// from content script:
+chrome.runtime.onMessage.addListener(onTabMessageCb);
+// from devtools panel:
+chrome.runtime.onConnect.addListener(onDevtoolsConnectCb);
 
-async function initialize() {
-    chrome.tabs.onActivated.addListener(onTabActivatedCb);
-    chrome.tabs.onRemoved.addListener(onTabRemovedCb);
-    // from content script:
-    chrome.runtime.onMessage.addListener(onTabMessageCb);
-    // from devtools panel:
-    chrome.runtime.onConnect.addListener(onDevtoolsConnectCb);
+const webRequestFilter = {
+    urls: [ "http://*/*", "https://*/*" ],
+};
+chrome.webRequest.onCompleted.addListener(onWebRequestCompletedCb, webRequestFilter);
+chrome.webNavigation.onCompleted.addListener(setupTabAfterNavigationCb);
 
-    const webRequestFilter = {
-        urls: [ "http://*/*", "https://*/*" ],
-    };
-    chrome.webRequest.onCompleted.addListener(onWebRequestCompletedCb, webRequestFilter);
-    chrome.webNavigation.onCompleted.addListener(setupTabAfterNavigationCb);
-
-    const tab_list = await chrome.tabs.query({ active: true });
+chrome.tabs.query({ active: true }).then(tab_list => {
     tab_list
         .filter(tab => !!tab.id)
         .forEach(tab => initializeTab(tab.id as number, true));
-}
+});
 
 
 async function onTabMessageCb(message: any, sender: chrome.runtime.MessageSender) {
@@ -47,7 +47,7 @@ async function onTabMessageCb(message: any, sender: chrome.runtime.MessageSender
         port.postMessage({ message });
     }
 
-    console.log(id, message);
+    // console.log(id, message);
 }
 
 

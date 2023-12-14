@@ -10,8 +10,8 @@
     <div id="main">
         <div id="tools">
             <span id="deleteBtn">&times;</span>
-            <input id="filterStr" type="text" placeholder="guess what goes here...">
-            <input id="attrChk" type="checkbox" checked>
+            <input id="filterStr" type="text" placeholder="filter (space = AND, comma = OR, minus = NOT)">
+            <input id="attrChk" type="checkbox">
             <span class="checkbox-label" id="attrChkLbl">Attributes</span>
             <input id="methodChk" type="checkbox" checked>
             <span class="checkbox-label" id="methodChkLbl">API</span>
@@ -30,13 +30,13 @@
         </div>
         <div id="requestHeader" class="panel-header">
             <span>Request</span>
-            <input type="text" id="requestFilterStr">
+            <input type="text" id="requestFilterStr" placeholder="filter (space = AND, comma = OR, minus = NOT)">
             <button id="copyRequestBtn">Copy</button>
         </div>
         <div id="request" class="panel"></div>
         <div id="responseHeader" class="panel-header">
             <span>Response</span>
-            <input type="text" id="responseFilterStr">
+            <input type="text" id="responseFilterStr" placeholder="filter (space = AND, comma = OR, minus = NOT)">
             <button id="copyResponseBtn">Copy</button>
         </div>
         <div id="response" class="panel"></div>
