@@ -14,8 +14,13 @@ chrome.runtime.onMessage.addListener(async (message: any) => {
     if (!(typeof message === 'object')) return;
     const cmd = message as CommandMessage;
 
-    if (message.beginTrack) {
-        setupPageApiOverride(true);
+    if (cmd.beginTrack) {
+        setupPageApiOverride();
+    }
+    else if (cmd.replay) {
+        document.dispatchEvent(new CustomEvent(ContentToPageEvent, {
+            detail: JSON.stringify(cmd),
+        }));
     }
 });
 
@@ -24,12 +29,12 @@ document.addEventListener(PageToContentEvent, (e) => {
     chrome.runtime.sendMessage(ce.detail);
 });
 
-function setupPageApiOverride(force: boolean) {
+function setupPageApiOverride() {
     document.dispatchEvent(new CustomEvent(ContentToPageEvent, {
         detail: true
     }));
 }
 
 setTimeout(() => {
-    setupPageApiOverride(false);
+    setupPageApiOverride();
 }, 0);

@@ -8,7 +8,10 @@ const resizeHandle = document.querySelector('#resize') as HTMLDivElement;
 const port = chrome.runtime.connect();
 const listCtrl = new ListController(port);
 
-port.postMessage({ setup: chrome.devtools.inspectedWindow.tabId });
+port.postMessage({
+    setup: true,
+    tabId: chrome.devtools.inspectedWindow.tabId
+});
 port.onMessage.addListener(msg => listCtrl.onPageMessage(msg));
 
 
@@ -18,6 +21,7 @@ function on_resize_mousedown() {
     is_mouse_down = true;
     document.body.addEventListener('mousemove', on_resize_mousemove);
     document.body.addEventListener('mouseup', on_resize_end);
+    document.body.style.userSelect = 'none';
 }
 function on_resize_mousemove(event: MouseEvent) {
     if (is_mouse_down) {
@@ -32,4 +36,5 @@ const on_resize_end = () => {
     is_mouse_down = false;
     document.body.removeEventListener('mouseup', on_resize_end);
     resizeHandle.removeEventListener('mousemove', on_resize_mousemove);
+    document.body.style.userSelect = 'initial';
 }

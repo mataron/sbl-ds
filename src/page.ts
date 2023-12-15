@@ -1,11 +1,19 @@
-import { ContentToPageEvent, PageMessage, PageToContentEvent } from "./common/comms";
-import { InnerLevelSiebelApp, SiebelMethodConfig, SiebelMethodResponseCallback, SiebelPropertySet, SiebelService, T, getSiebelApp, getTheApplication } from "./common/siebel";
+import { ContentToPageEvent, PageApiInfo, PageMessage, PageToContentEvent } from "./common/comms";
+import { InnerLevelSiebelApp, PropertySet, R, SiebelMethodConfig, SiebelMethodResponseCallback, SiebelPropertySet, SiebelService, T, getSiebelApp, getTheApplication } from "./common/siebel";
 
 
 const SIEBEL_SETUP_MONITOR_TIMEOUT = 50;
 
 document.addEventListener(ContentToPageEvent, (e) => {
-    sblds_setup((e as CustomEvent).detail);
+    const detail = (e as CustomEvent).detail;
+    if (typeof detail == 'boolean') {
+        sblds_setup(detail);
+        return;
+    }
+    const cmd = JSON.parse(detail);
+    if (cmd.replay) {
+        sblds_replay(cmd.item);
+    }
 });
 
 sblds_setup(false);
@@ -105,6 +113,7 @@ function sblds_overwriteGotoView(app: InnerLevelSiebelApp) {
         originalGotoView.call(app, view, viewId, strURL, strTarget);
         const msg: PageMessage = {
             visit: {
+                id: makeId(),
                 view, viewId, strURL, strTarget,
             },
             when: Date.now(),
@@ -188,7 +197,7 @@ function sblds_onAsyncApiResponse(
         api: {
             id,
             success,
-            async: config.async,
+            async: config.async || false,
             service,
             method: name,
             request: T(request),
@@ -210,4 +219,30 @@ function makeId() {
     const s0 = ('' + Math.random()).substring(2);
     const s1 = ('' + Math.random()).substring(2);
     return s0 + s1;
+}
+
+
+function sblds_replay(item: PageMessage) {
+    if (item.api) {
+        if (item.api.async) {
+            sblds_replayAsyncMethod(item.api);
+        } else {
+            sblds_replaySyncMethod(item.api);
+        }
+    }
+    if (item.attribute) {
+        if (item.attribute.retrieve) {
+            getSiebelApp()?.S_App.GetProfileAttr(item.attribute.name);
+        } else {
+            getSiebelApp()?.S_App.SetProfileAttr(item.attribute.name, item.attribute.value);
+        }
+    }
+}
+
+function sblds_replayAsyncMethod(item: PageApiInfo) {
+    getSiebelApp()?.S_App.GetService(item.service).InvokeMethod(item.method, R(item.request), { async: true, cb: () => {}});
+}
+
+function sblds_replaySyncMethod(item: PageApiInfo) {
+    getSiebelApp()?.S_App.GetService(item.service).InvokeMethod(item.method, R(item.request));
 }

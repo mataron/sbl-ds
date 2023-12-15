@@ -1,7 +1,7 @@
 import { PageApiInfo } from "../common/comms";
 import { apiToStatusBarData } from "./action-data";
 import { ALWAYS_MATCH, Filter } from "./filter";
-import { toggleClass, xmlEscape } from "./tools";
+import { toggleClass, xmlEscape, xmlify } from "./tools";
 
 export class DetailsController {
     private main = document.querySelector('#main') as HTMLDivElement;
@@ -15,8 +15,10 @@ export class DetailsController {
     private response = document.querySelector('#response') as HTMLDivElement;
     private requestFilterStr = document.querySelector('#requestFilterStr') as HTMLInputElement;
     private responseFilterStr = document.querySelector('#responseFilterStr') as HTMLInputElement;
-    private copyRequestBtn = document.querySelector('#copyRequestBtn') as HTMLInputElement;
-    private copyResponseBtn = document.querySelector('#copyResponseBtn') as HTMLInputElement;
+    private copyRequestJSONBtn = document.querySelector('#copyRequestJSONBtn') as HTMLInputElement;
+    private copyResponseJSONBtn = document.querySelector('#copyResponseJSONBtn') as HTMLInputElement;
+    private copyRequestXMLBtn = document.querySelector('#copyRequestXMLBtn') as HTMLInputElement;
+    private copyResponseXMLBtn = document.querySelector('#copyResponseXMLBtn') as HTMLInputElement;
 
     public item?: PageApiInfo;
 
@@ -28,13 +30,21 @@ export class DetailsController {
         this.responseFilterStr.oninput = () => this.refreshView();
         this.requestFilterStr.onclick = (e) => e.stopPropagation();
         this.responseFilterStr.onclick = (e) => e.stopPropagation();
-        this.copyRequestBtn.onclick = (e) => {
+        this.copyRequestJSONBtn.onclick = (e) => {
             e.stopPropagation();
-            this.copyFromSelectedItem('request');
+            this.copyFromSelectedItemToJSON('request');
         }
-        this.copyResponseBtn.onclick = (e) => {
+        this.copyResponseJSONBtn.onclick = (e) => {
             e.stopPropagation();
-            this.copyFromSelectedItem('response');
+            this.copyFromSelectedItemToJSON('response');
+        }
+        this.copyRequestXMLBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.copyFromSelectedItemToXML('request');
+        }
+        this.copyResponseXMLBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.copyFromSelectedItemToXML('response');
         }
     }
 
@@ -188,7 +198,11 @@ export class DetailsController {
         return el.style.display == 'none' || !el.style.display;
     }
     
-    private copyFromSelectedItem(field: string): void {
+    private copyFromSelectedItemToJSON(field: string): void {
         navigator.clipboard.writeText(JSON.stringify((this.item as any)[field]));
+    }
+    
+    private copyFromSelectedItemToXML(field: string): void {
+        navigator.clipboard.writeText(xmlify((this.item as any)[field]));
     }
 }

@@ -55,9 +55,9 @@ export interface SiebelPropertySet {
 export type SiebelMethodResponseCallback = (name: string, request: SiebelPropertySet, response: SiebelPropertySet) => void;
 
 export interface SiebelMethodConfig {
-    async: boolean;
-    selfbusy: boolean;
-    mask: boolean;
+    async?: boolean;
+    selfbusy?: boolean;
+    mask?: boolean;
     scope?: unknown;
     errcb?: SiebelMethodResponseCallback;
     cb?: SiebelMethodResponseCallback;

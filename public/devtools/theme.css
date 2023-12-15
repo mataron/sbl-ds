@@ -1,0 +1,179 @@
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #292a2b;
+        color: #afafaf;
+    }
+
+    input, button {
+        border: 1px solid #1a1a1a;
+        color: #afafaf;
+        background: #242424;
+    }
+    button:enabled:hover,
+    button:focus {
+        background: #372f2f;
+    }
+
+
+    #resize {
+        background: #242424;
+    }
+    #resize:hover {
+        background: #343434;
+    }
+
+    #list>div {
+        border-bottom: 1px solid #333;
+    }
+    #list>div:hover {
+        background-color: #333;
+    }
+    #list>div.selected {
+        background-color: #444;
+    }
+    #list>div.selected:hover {
+        background-color: #333;
+    }
+    
+    #scrollToTopBtn {
+        color: black;
+    }
+
+    #hideDetailsBtn:hover {
+        background-color: #333;
+    }
+
+    #details .panel-header {
+        background-color: #333;
+        border-top: 1px solid #444;
+        border-bottom: 1px solid #444;
+    }
+    #details .panel-header.empty {
+        background-color: #141414;
+    }
+    #details .panel-header:hover {
+        background-color: #444;
+    }
+
+    #details .panel .name:hover {
+        background-color: #333;
+    }
+    #details .panel .entry .value {
+        background-color: #333;
+    }
+
+    #details .panel .entry.collapsed {
+        background-color: #141414;
+    }
+
+    #statusbar {
+        border-top: 1px solid #666;
+    }
+    #statusbar .counts {
+        border-left: 1px solid #666;
+    }
+    #statusbar .value {
+        background-color: #333;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+
+    button {
+        background: #ddd;
+    }
+    button:hover {
+        background: #eee;
+    }
+
+    #resize {
+        background: #1b1b51;
+    }
+    #resize:hover {
+        background: #09091a;
+    }
+
+    #list>div {
+        border-bottom: 1px solid #eee;
+    }
+    #list>div:hover {
+        background-color: #eee;
+    }
+    #list>div.selected {
+        background-color: #ddd;
+    }
+    #list>div.selected:hover {
+        background-color: #eee;
+    }
+        
+    #hideDetailsBtn:hover {
+        background-color: #eee;
+    }
+
+    #details .panel-header {
+        background-color: #eee;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+    #details .panel-header.empty {
+        background-color: #fafafa;
+    }
+    #details .panel-header:hover {
+        background-color: #ddd;
+    }
+
+    #details .panel .name:hover {
+        background-color: #eee;
+    }
+    #details .panel .entry .value {
+        background-color: #eee;
+    }
+
+    #details .panel .entry.collapsed {
+        background-color: #fafafa;
+    }
+
+    #statusbar {
+        border-top: 1px solid #fafafa;
+    }
+    #statusbar .counts {
+        border-left: 1px solid #fafafa;
+    }
+    #statusbar .value {
+        background-color: #eee;
+    }
+}
+
+#list .success {
+    color: green;
+}
+#list .error {
+    color: red;
+}
+#list .replay {
+    color: green;
+}
+
+#scrollToTopBtn {
+    background-color: #eef;
+    border: 1px solid #66f;
+}
+#scrollToTopBtn:hover {
+    background-color: #aaf;
+}
+
+#details .panel .entry .number {
+    color: #696;
+}
+#details .panel .entry .null {
+    color: #966;
+}
+#details .panel .entry .boolean {
+    color: #669;
+}
+#details .panel .entry .name .array {
+    color: #939;
+}
+#statusbar .value {
+    color: #696;
+}

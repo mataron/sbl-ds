@@ -4,11 +4,30 @@ html {
 
 body {
     font-family: monospace;
-    display: flex;
-    flex-direction: row;
     height: 100%;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+}
+
+button {
+    border-radius: 4px;
+    border: 0;
+    font-weight: 900;
+    padding: 2px 4px;
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    max-height: calc(100% - 20px);
+}
+
+#closeSessionBtn {
+    display: none;
 }
 
 #main {
@@ -17,6 +36,7 @@ body {
     flex-direction: column;
     flex-grow: 1;
     user-select: none;
+    overflow-y: auto;
 }
 
 #details {
@@ -28,15 +48,10 @@ body {
 #resize {
     flex-grow: 0;
     flex-shrink: 0;
-    background: #1b1b51;
     width: 0.2rem;
     cursor: col-resize;
     margin: 0 0 0 auto;
     display: none;
-}
-
-#resize:hover {
-    background: #09091a;
 }
 
 #tools {
@@ -80,19 +95,8 @@ body {
     display: flex;
     flex-direction: row;
     cursor: pointer;
-    border-bottom: 1px solid #eee;
     padding: 5px;
     user-select: text;
-}
-
-#list>div:hover {
-    background-color: #eee;
-}
-#list>div.selected {
-    background-color: #ddd;
-}
-#list>div.selected:hover {
-    background-color: #eee;
 }
 
 #list>div>.label {
@@ -106,12 +110,9 @@ body {
     margin-top: -0.2em;
 }
 
-#list .success {
-    color: green;
-}
-
-#list .error {
-    color: red;
+#list .replay {
+    margin-left: 5px;
+    padding: 0 5px;
 }
 
 #scrollToTopBtn {
@@ -120,16 +121,14 @@ body {
     right: 15px;
     font-size: 2em;
     font-weight: 900;
-    background-color: #eef;
     border-radius: 50%;
     padding: 0px 12px 4px 12px;
-    opacity: 0.8;
-    border: 1px solid #66f;
+    opacity: 0.4;
     cursor: pointer;
 }
 
 #scrollToTopBtn:hover {
-    background-color: #aaf;
+    opacity: 1;
 }
 
 #details .header {
@@ -146,9 +145,6 @@ body {
     padding: 4px 8px;
     border-radius: 4px;
 }
-#hideDetailsBtn:hover {
-    background-color: #eee;
-}
 
 #detailsLabel {
     user-select: text;
@@ -156,9 +152,6 @@ body {
 
 #details .panel-header {
     cursor: pointer;
-    background-color: #eee;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -176,16 +169,8 @@ body {
     display: initial;
 }
 
-#details .panel-header.empty {
-    background-color: #fafafa;
-}
-
 #details .panel-header.empty > input {
     display: none;
-}
-
-#details .panel-header:hover {
-    background-color: #ddd;
 }
 
 #details .panel {
@@ -210,16 +195,11 @@ body {
     text-wrap: nowrap;
 }
 
-#details .panel .name:hover {
-    background-color: #eee;
-}
-
 #details .panel .entry.long {
     flex-direction: column;
 }
 
 #details .panel .entry .value {
-    background-color: #eee;
     padding: 0 5px;
     border-radius: 4px;
     margin-left: 4px;
@@ -227,26 +207,13 @@ body {
     text-wrap: nowrap;
 }
 
-#details .panel .entry .number {
-    color: #696;
-}
-
-#details .panel .entry .null {
-    color: #966;
-}
-
-#details .panel .entry .boolean {
-    color: #669;
-}
 
 #details .panel .entry .name .array {
-    color: #939;
     font-weight: 900;
 }
 
 #details .panel .entry.collapsed {
     width: 100%;
-    background-color: #fafafa;
 }
 #details .panel .entry.collapsed .name {
     width: 100%;
@@ -257,4 +224,20 @@ body {
 
 #request {
     flex-basis: inherit;
+}
+
+#statusbar {
+    flex-grow: 0;
+    padding-left: 5px;
+}
+
+#statusbar .counts {
+    padding-left: 8px;
+}
+
+#statusbar .value {
+    padding: 0 5px;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-weight: 900;
 }

@@ -1,7 +1,12 @@
-import { DevToolsMessage, PageMessage } from "../common/comms";
+import { DevToolsMessage, PageMessage, PageVisitInfo } from "../common/comms";
 import { toStatusBarData } from "./action-data";
 import { DetailsController } from "./details";
 import { Filter } from "./filter";
+
+interface SaveObject {
+    type: 'session';
+    list: PageMessage[];
+};
 
 export class ListController {
     private list = document.querySelector('#list') as HTMLDivElement;
@@ -12,12 +17,22 @@ export class ListController {
     private attrChkLbl = document.querySelector('#attrChkLbl') as HTMLSpanElement;
     private methodChkLbl = document.querySelector('#methodChkLbl') as HTMLSpanElement;
     private scrollToTopBtn = document.querySelector('#scrollToTopBtn') as HTMLButtonElement;
+    private copySessionBtn = document.querySelector('#copySessionBtn') as HTMLButtonElement;
+    private viewsCountLbl = document.querySelector('#statusbar .views') as HTMLSpanElement;
+    private attributesCountLbl = document.querySelector('#statusbar .attributes') as HTMLSpanElement;
+    private callsCountLbl = document.querySelector('#statusbar .calls') as HTMLSpanElement;
+    private totalCountLbl = document.querySelector('#statusbar .total') as HTMLSpanElement;
+    private visibleCountLbl = document.querySelector('#statusbar .visible') as HTMLSpanElement;
     
     private messages: PageMessage[] = [];
     private filter?: Filter;
     private details = new DetailsController();
 
-    constructor(port: chrome.runtime.Port) {
+    private viewCount = 0;
+    private attributeCount = 0;
+    private callsCount = 0;
+
+    constructor(private port: chrome.runtime.Port) {
         this.deleteBtn.onclick = () => {
             port.postMessage({ clear: true });
             this.messages.splice(0, this.messages.length);
@@ -38,17 +53,19 @@ export class ListController {
             this.onHistoryReplace();
         };
         this.scrollToTopBtn.onclick = () => this.list?.scrollTo(0, 0);
+        this.copySessionBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.copySessionToJSON();
+        };
     }
 
     onPageMessage(msg: DevToolsMessage): void {
         try {
             if (msg.history) {
-                // console.log('dt-h')
                 this.messages.splice(0, this.messages.length, ...msg.history);
                 this.onHistoryReplace();
             }
             if (msg.message) {
-                // console.log('dt-m')
                 if (msg.message.api) {
                     const id = msg.message.api.id;
                     const idx = this.messages.findIndex(x => x.api && x.api.id == id);
@@ -90,10 +107,13 @@ export class ListController {
         if (!selectedItemFound) {
             this.details.deselectItem();
         }
+        this.refreshCounts();
     }
 
     private onHistoryAppend(): void {
         const item = this.messages[this.messages.length - 1];
+        this.onItemAdded(item);
+
         if (item.api && item.api.response) {
             const prev = document.querySelector('#method' + item.api.id);
             if (prev) {
@@ -110,24 +130,32 @@ export class ListController {
         if (this.isSelectedItem(item)) {
             this.details.refreshView();
         }
+
+        this.refreshVisibleCount();
     }
 
     private createListItem(item: PageMessage): HTMLElement {
-        // console.log(item);
         const data = toStatusBarData(item);
         const icon = data.pending ? '&#x021bb;'/* ↻ */ : data.status ? '&#x02713;'/* ✓ */ : '&#x02717;'/* ✗ */;
         let cls = '';
         if (this.isSelectedItem(item)) {
             cls = 'class="selected"';
         }
-        // console.log(data);
+        let tail = `<div class="duration">${data.duration}</div>`;
+        if (item.visit) {
+            tail = '<button>{J}</button>';
+        } else {
+            tail += '<button class="replay">&#x022b3;</button>'; /* ⊳ */
+        }
+
         const template = `
             <div id="${data.id}" ${cls}>
                 <span class="status ${data.pending ? 'pending' : data.status ? 'success' : 'error'}">${icon}</span>
                 <div class="label">${data.label}</div>
-                <div class="duration">${data.duration}</div>
+                ${tail}
             </div>
         `;
+
         const doc = new DOMParser().parseFromString(template, "text/xml");
         const node = doc.childNodes[0] as HTMLElement;
         if (item.api) {
@@ -136,6 +164,20 @@ export class ListController {
         } else {
             node.addEventListener('click', () => this.details.deselectItem());
         }
+
+        const btn = node.querySelector('button') as HTMLButtonElement;
+        if (item.visit) {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.copyPageSession(item.visit as PageVisitInfo);
+            });
+        } else {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.replay(item);
+            });
+        }
+
         return node;
     }
 
@@ -172,5 +214,71 @@ export class ListController {
         if (!item.api) return false;
         if (!this.details.item) return false;
         return item.api.id == this.details.item.id;
+    }
+
+    private copySessionToJSON() {
+        navigator.clipboard.writeText(JSON.stringify(this.toSessionData(this.messages)));
+    }
+
+    private copyPageSession(item: PageVisitInfo) {
+        const beginIdx = this.messages.findIndex(x => x.visit && x.visit.id == item.id);
+        if (beginIdx < 0) {
+            return;
+        }
+
+        let endIdx = beginIdx + 1;
+        while (endIdx < this.messages.length) {
+            if (this.messages[endIdx].visit) {
+                break;
+            }
+            endIdx++;
+        }
+        
+        const data = this.messages.slice(beginIdx, endIdx);
+        navigator.clipboard.writeText(JSON.stringify(this.toSessionData(data)));
+    }
+
+    private toSessionData(list: PageMessage[]): SaveObject {
+        return { type: 'session', list };
+    }
+
+    private onItemAdded(item: PageMessage): void {
+        if (item.api) {
+            this.callsCount++;
+            this.callsCountLbl.textContent = '' + this.callsCount;
+        } else if (item.attribute) {
+            this.attributeCount++;
+            this.attributesCountLbl.textContent = '' + this.attributeCount;
+        }
+        else {
+            this.viewCount++;
+            this.viewsCountLbl.textContent = '' + this.viewCount;
+        }
+        this.totalCountLbl.textContent = '' + this.messages.length;
+    }
+
+    private refreshCounts(): void {
+        this.callsCount = this.messages.filter(m => !!m.api).length;
+        this.attributeCount = this.messages.filter(m => !!m.attribute).length;
+        this.viewCount = this.messages.filter(m => !!m.visit).length;
+
+        this.callsCountLbl.textContent = '' + this.callsCount;
+        this.attributesCountLbl.textContent = '' + this.attributeCount;
+        this.viewsCountLbl.textContent = '' + this.viewCount;
+
+        this.totalCountLbl.textContent = '' + this.messages.length;
+        this.refreshVisibleCount();
+    }
+
+    private refreshVisibleCount(): void {
+        this.visibleCountLbl.textContent = '' + document.querySelectorAll('#list>div').length;
+    }
+
+    private replay(item: PageMessage): void {
+        this.port.postMessage({
+            tabId: chrome.devtools.inspectedWindow.tabId,
+            replay: true,
+            item
+        });
     }
 }

@@ -4,43 +4,68 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="panel.css">
+    <link rel="stylesheet" type="text/css" href="theme.css">
 </head>
 
 <body>
-    <div id="main">
-        <div id="tools">
-            <span id="deleteBtn">&times;</span>
-            <input id="filterStr" type="text" placeholder="filter (space = AND, comma = OR, minus = NOT)">
-            <input id="attrChk" type="checkbox">
-            <span class="checkbox-label" id="attrChkLbl">Attributes</span>
-            <input id="methodChk" type="checkbox" checked>
-            <span class="checkbox-label" id="methodChkLbl">API</span>
+    <div id="container">
+        <div id="main">
+            <div id="tools">
+                <span id="deleteBtn">&times;</span>
+                <input id="filterStr" type="text" placeholder="filter (space = AND, comma = OR, minus = NOT)">
+                <input id="attrChk" type="checkbox">
+                <span class="checkbox-label" id="attrChkLbl">Attributes</span>
+                <input id="methodChk" type="checkbox" checked>
+                <span class="checkbox-label" id="methodChkLbl">API</span>
+                <button id="copySessionBtn">{J}</button>
+            </div>
+            <div id="list"></div>
+            <div id="scrollToTopBtn">&uparrow;</div>
         </div>
-        <div id="list"></div>
-        <div id="scrollToTopBtn">&uparrow;</div>
+
+        <div id="resize">&nbsp;</div>
+
+        <div id="details">
+            <div class="header">
+                <span id="hideDetailsBtn">&times;</span>
+                <span id="detailsLabel"></span>
+                <span>&nbsp;</span>
+            </div>
+
+            <div id="requestHeader" class="panel-header">
+                <span>Request</span>
+                <input type="text" id="requestFilterStr" placeholder="filter (space = AND, comma = OR, minus = NOT)">
+                <div>
+                    <button id="copyRequestJSONBtn">{J}</button>
+                    <button id="copyRequestXMLBtn">&lt;/&gt;</button>
+                </div>
+            </div>
+            <div id="request" class="panel"></div>
+
+            <div id="responseHeader" class="panel-header">
+                <span>Response</span>
+                <input type="text" id="responseFilterStr" placeholder="filter (space = AND, comma = OR, minus = NOT)">
+                <div>
+                    <button id="copyResponseJSONBtn">{J}</button>
+                    <button id="copyResponseXMLBtn">&lt;/&gt;</button>
+                </div>
+            </div>
+            <div id="response" class="panel"></div>
+        </div>
     </div>
 
-    <div id="resize">&nbsp;</div>
-
-    <div id="details">
-        <div class="header">
-            <span id="hideDetailsBtn">&times;</span>
-            <span id="detailsLabel"></span>
-            <span>&nbsp;</span>
-        </div>
-        <div id="requestHeader" class="panel-header">
-            <span>Request</span>
-            <input type="text" id="requestFilterStr" placeholder="filter (space = AND, comma = OR, minus = NOT)">
-            <button id="copyRequestBtn">Copy</button>
-        </div>
-        <div id="request" class="panel"></div>
-        <div id="responseHeader" class="panel-header">
-            <span>Response</span>
-            <input type="text" id="responseFilterStr" placeholder="filter (space = AND, comma = OR, minus = NOT)">
-            <button id="copyResponseBtn">Copy</button>
-        </div>
-        <div id="response" class="panel"></div>
+    <div id="statusbar">
+        <span id="state">READY</span>
+        <span class="counts">
+            <span class="value visible">0</span> / <span class="value total">0</span> Rows
+        </span>
+        <span class="counts">
+            <span class="label">Views</span> <span class="value views">0</span>
+            <span class="label">Attributes</span> <span class="value attributes">0</span>
+            <span class="label">API Calls</span> <span class="value calls">0</span>
+        </span>
     </div>
+
     <script src="../devtools-panel.js"></script>
 </body>
 

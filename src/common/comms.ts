@@ -2,6 +2,16 @@ import { PropertySet } from "./siebel";
 
 export interface CommandMessage {
     beginTrack?: boolean;
+    replay?: boolean;
+    item?: PageMessage;
+}
+
+export interface DevToolsMessage {
+    tabId: number;
+    setup?: boolean;
+    clear?: boolean;
+    replay?: boolean;
+    item?: PageMessage;
 }
 
 export interface PageProfileAttributeInfo {
@@ -23,6 +33,7 @@ export interface PageApiInfo {
 }
 
 export interface PageVisitInfo {
+    id: string;
     view: string;
     viewId?: string;
     strURL?: string;

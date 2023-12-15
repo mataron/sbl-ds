@@ -1,4 +1,4 @@
-import { CommandMessage, PageMessage } from "./common/comms";
+import { CommandMessage, DevToolsMessage, PageMessage } from "./common/comms";
 
 
 interface TabInfo {
@@ -93,7 +93,6 @@ async function initializeTab(id: number, forceInject: boolean) {
 
 async function onWebRequestCompletedCb(details: chrome.webRequest.WebResponseCacheDetails) {
     if (!(details.tabId in TAB_LIST)) return;
-    const data = TAB_LIST[details.tabId];
 
     if (!urlMatchesSiebelSetupJsFiles(details.url)) return;
 
@@ -116,12 +115,20 @@ function urlMatchesSiebelSetupJsFiles(url: string): boolean {
 
 
 async function onDevtoolsConnectCb(port: chrome.runtime.Port) {
-    port.onMessage.addListener((message) => {
-        const id = message.setup;
-        if (!id || !TAB_LIST[id]) return;
+    port.onMessage.addListener((message: DevToolsMessage) => {
+        if (message.setup) {
+            const id = message.tabId;
+            if (!TAB_LIST[id]) return;
 
-        PORTS_LIST[id] = port;
-    
-        port.postMessage({ history: TAB_LIST[id].messages });
+            PORTS_LIST[id] = port;
+        
+            port.postMessage({ history: TAB_LIST[id].messages });
+        }
+        else if (message.clear) {
+            TAB_LIST[message.tabId].messages = [];
+        }
+        else if (message.replay) {
+            chrome.tabs.sendMessage(message.tabId, message);
+        }
     });
 }
