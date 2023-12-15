@@ -46,13 +46,10 @@ async function onTabMessageCb(message: any, sender: chrome.runtime.MessageSender
     if (port) {
         port.postMessage({ message });
     }
-
-    // console.log(id, message);
 }
 
 
 async function onTabRemovedCb(tabId: number) {
-    // console.log('tab removed', tabId);
     delete TAB_LIST[tabId];
     const port = PORTS_LIST[tabId];
     if (port) {
@@ -77,7 +74,6 @@ async function setupTabAfterNavigationCb(details: chrome.webNavigation.WebNaviga
 async function initializeTab(id: number, forceInject: boolean) {
     let shouldInject = forceInject;
     if (!(id in TAB_LIST)) {
-        // console.log('new tab activated', id);
         shouldInject = true;
         TAB_LIST[id] = {
             messages: [],
@@ -88,7 +84,6 @@ async function initializeTab(id: number, forceInject: boolean) {
         return;
     }
 
-    // console.log('tab injecting content', id);
     await chrome.scripting.executeScript({
         target: { tabId: id },
         files: ['content.js'],
@@ -97,14 +92,10 @@ async function initializeTab(id: number, forceInject: boolean) {
 
 
 async function onWebRequestCompletedCb(details: chrome.webRequest.WebResponseCacheDetails) {
-    // console.log(details.tabId, TAB_LIST[details.tabId], details.url);
-
     if (!(details.tabId in TAB_LIST)) return;
     const data = TAB_LIST[details.tabId];
 
     if (!urlMatchesSiebelSetupJsFiles(details.url)) return;
-
-    // console.warn('TRACKING REQUEST');
 
     const msg: CommandMessage = {
         beginTrack: true,
@@ -125,18 +116,12 @@ function urlMatchesSiebelSetupJsFiles(url: string): boolean {
 
 
 async function onDevtoolsConnectCb(port: chrome.runtime.Port) {
-    // console.log('devtools connect');
-
     port.onMessage.addListener((message) => {
         const id = message.setup;
         if (!id || !TAB_LIST[id]) return;
-
-        // console.log('devtools setup', id);
 
         PORTS_LIST[id] = port;
     
         port.postMessage({ history: TAB_LIST[id].messages });
     });
-
-    // port.onDisconnect.addListener(() => console.log('devtools disconnected'));
 }

@@ -1,4 +1,4 @@
-import { DevToolsMessage, PageApiInfo, PageMessage } from "../common/comms";
+import { DevToolsMessage, PageMessage } from "../common/comms";
 import { toStatusBarData } from "./action-data";
 import { DetailsController } from "./details";
 import { Filter } from "./filter";
@@ -23,7 +23,6 @@ export class ListController {
             this.messages.splice(0, this.messages.length);
             this.clearListView();
         };
-        
         this.filterStr.oninput = () => {
             this.updateFilter();
             this.onHistoryReplace();

@@ -2,7 +2,6 @@ import { CommandMessage, ContentToPageEvent, PageToContentEvent } from "./common
 
 
 function loadPageScript() {
-    // console.log('tab injecting page');
     const s = document.createElement('script');
     s.src = chrome.runtime.getURL('page.js');
     s.onload = function() { s.remove(); };
@@ -11,10 +10,7 @@ function loadPageScript() {
 
 loadPageScript();
 
-// console.log('cs2')
 chrome.runtime.onMessage.addListener(async (message: any) => {
-    // console.log('cs3')
-    // console.log('COMMAND', message);
     if (!(typeof message === 'object')) return;
     const cmd = message as CommandMessage;
 
@@ -23,9 +19,7 @@ chrome.runtime.onMessage.addListener(async (message: any) => {
     }
 });
 
-// console.log('cs4')
 document.addEventListener(PageToContentEvent, (e) => {
-    // console.log('c2b');
     const ce = e as CustomEvent;
     chrome.runtime.sendMessage(ce.detail);
 });
@@ -36,9 +30,6 @@ function setupPageApiOverride(force: boolean) {
     }));
 }
 
-// console.log('cs5')
 setTimeout(() => {
-    // console.log('c2p>>');
     setupPageApiOverride(false);
 }, 0);
-// console.log('content-script')

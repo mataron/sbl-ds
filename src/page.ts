@@ -4,23 +4,17 @@ import { InnerLevelSiebelApp, SiebelMethodConfig, SiebelMethodResponseCallback, 
 
 const SIEBEL_SETUP_MONITOR_TIMEOUT = 50;
 
-// console.log('page-script')
 document.addEventListener(ContentToPageEvent, (e) => {
-    // console.log('<<c2p');
     sblds_setup((e as CustomEvent).detail);
 });
 
 sblds_setup(false);
 
 function sblds_setup(force: boolean) {
-    // console.log(`sblds_setup`, force, getSiebelApp());
     if (getSiebelApp()) {
-        // console.warn('TRACKING REQUEST DIRECT', getSiebelApp()?.S_App.__withApiTracking);
         sblds_overwriteSiebelApi();
     } else if (force) {
-        // console.warn('TRACKING REQUEST');
         setTimeout(() => {
-            // console.warn('TRACKING REQUEST ATTEMPT', !!getSiebelApp(), getSiebelApp() ? getSiebelApp()?.S_App.__withApiTracking : false);
             if (!getSiebelApp()) {
                 return;
             }
@@ -32,8 +26,6 @@ function sblds_setup(force: boolean) {
 
 
 function sblds_overwriteSiebelApi() {
-    // console.warn('OVERWRITTING SIEBEL API');
-
     const app0 = getSiebelApp();
     if (app0) {
         sblds_overwriteSiebelApiOnRoot(app0.S_App);
@@ -46,7 +38,6 @@ function sblds_overwriteSiebelApi() {
 
 
 function sblds_sendToContentScript(msg: PageMessage) {
-    // console.log('p2c');
     document.dispatchEvent(new CustomEvent(PageToContentEvent, {
         detail: msg
     }));
@@ -59,6 +50,14 @@ function sblds_overwriteSiebelApiOnRoot(app: InnerLevelSiebelApp) {
     }
     app.__withApiTracking = true;
 
+    sblds_overwriteSetProfileAttr(app);
+    sblds_overwriteGetProfileAttr(app);
+    sblds_overwriteGotoView(app);
+    sblds_overwriteGetService(app);
+}
+
+
+function sblds_overwriteSetProfileAttr(app: InnerLevelSiebelApp) {
     const originalSetProfileAttr = app.SetProfileAttr;
     app.SetProfileAttr = (name: string, value: any): boolean => {
         const beginTm = Date.now();
@@ -76,7 +75,10 @@ function sblds_overwriteSiebelApiOnRoot(app: InnerLevelSiebelApp) {
         sblds_sendToContentScript(msg);
         return result;
     };
+}
 
+
+function sblds_overwriteGetProfileAttr(app: InnerLevelSiebelApp) {
     const originalGetProfileAttr = app.GetProfileAttr;
     app.GetProfileAttr = (name: string): string => {
         const beginTm = Date.now();
@@ -94,7 +96,10 @@ function sblds_overwriteSiebelApiOnRoot(app: InnerLevelSiebelApp) {
         sblds_sendToContentScript(msg);
         return result;
     };
+}
 
+
+function sblds_overwriteGotoView(app: InnerLevelSiebelApp) {
     const originalGotoView = app.GotoView;
     app.GotoView = (view: string, viewId?: string, strURL?: string, strTarget?: string) => {
         originalGotoView.call(app, view, viewId, strURL, strTarget);
@@ -106,7 +111,10 @@ function sblds_overwriteSiebelApiOnRoot(app: InnerLevelSiebelApp) {
         };
         sblds_sendToContentScript(msg);
     };
+}
 
+
+function sblds_overwriteGetService(app: InnerLevelSiebelApp) {
     const originalGetService = app.GetService;
     app.GetService = (serviceName: string): SiebelService => {
         let service = originalGetService.call(app, serviceName);

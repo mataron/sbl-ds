@@ -101,7 +101,6 @@ export class DetailsController {
         }
         el.classList.remove('empty');
         const template = this.makeObjectViewTemplate(object, filter) || '<div>&lt;empty&gt;</div>';
-        // console.log(template);
         const doc = new DOMParser().parseFromString(template, "text/xml");
         const node = doc.childNodes[0] as HTMLElement;
         el.appendChild(node);
