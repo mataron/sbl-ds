@@ -256,10 +256,5 @@ body {
 }
 
 #request {
-    flex-grow: 1;
-    max-height: fit-content;
-}
-
-#response {
-    flex-grow: 0;
+    flex-basis: inherit;
 }
